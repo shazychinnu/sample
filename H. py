@@ -1,0 +1,134 @@
+class User:
+
+    def __init__(self, user_id, name, role):
+
+        self.user_id = user_id
+
+        self.name = name
+
+        self.role = role
+
+
+
+class Role:
+
+    def __init__(self, role_id, name, permissions):
+
+        self.role_id = role_id
+
+        self.name = name
+
+        self.permissions = permissions
+
+
+
+class RBAC:
+
+    def __init__(self):
+
+        self.users = {}
+
+        self.roles = {}
+
+
+
+    def add_user(self, user_id, name, role):
+
+        if role not in self.roles:
+
+            raise ValueError(f"Role '{role}' does not exist.")
+
+        user = User(user_id, name, role)
+
+        self.users[user_id] = user
+
+
+
+    def add_role(self, role_id, name, permissions):
+
+        role = Role(role_id, name, permissions)
+
+        self.roles[role_id] = role
+
+
+
+    def grant_permission(self, role_id, permission):
+
+        if role_id not in self.roles:
+
+            raise ValueError(f"Role '{role_id}' does not exist.")
+
+        self.roles[role_id].permissions.add(permission)
+
+
+
+    def check_permission(self, user_id, permission):
+
+        if user_id not in self.users:
+
+            raise ValueError(f"User '{user_id}' does not exist.")
+
+        user_role = self.users[user_id].role
+
+        role_permissions = self.roles[user_role].permissions
+
+        return permission in role_permissions
+
+
+
+# Example usage
+
+rbac = RBAC()
+
+
+
+# Define roles and permissions
+
+c = int(input("enter how many roles needs to create : "))
+
+for i in range(c):
+    a= input("enter Role Name : ")
+    b = input("enter Role ID : ")
+    user_input = input("Enter your permissions (read, write, delete) separated by spaces: ")
+    responses = user_input.split(" ")
+    print(a,b,responses)
+
+    rbac.add_role(a,b, responses )
+    # i = i+1
+
+
+# Add users
+d = int(input("enter how many users needs to create : "))
+
+for i in range(d):
+    a= input("enter username : ")
+    b = input("enter role : ")
+    print(a,b)
+    rbac.add_user(i,a,b)
+    i = i+1
+
+# rbac.add_user(1, "Alice", "admin")
+
+# rbac.add_user(2, "Bob", "teller")
+
+# rbac.add_user(3, "Charlie", "analyst")
+
+
+
+# Grant additional permissions
+
+# rbac.grant_permission("analyst", "write")
+
+
+
+
+
+
+
+# Check permissions
+
+print("alice has read permission:", rbac.check_permission(0, "read"))
+
+print("Bob has delete permission:", rbac.check_permission(1, "delete"))
+
+#print("Charlie has write permission:", rbac.check_permission(2, "write"))
