@@ -1,0 +1,101 @@
+import json
+
+with open('C:/Users/diwak/Desktop/sample.json') as user_file:
+  user_data = json.load(user_file)
+print(user_data)
+class User:
+    def __init__(self, user_id, name, role):
+        self.user_id = user_id
+        self.name = name
+        self.role = role
+
+class Role:
+    def __init__(self, role_id, name, permissions):
+        self.role_id = role_id
+        self.name = name
+        self.permissions = permissions
+class RBAC:
+    def __init__(self):
+        self.users = {}
+        self.roles = {}
+
+    def add_user(self, user_id, name, role):
+        roles = user_data["Roles"].keys()
+        if role not in roles:
+            return ValueError(f"Role '{role}'does not exist.")
+        user_data["Users"] = {name:{"user_name": name,
+                                    "user_role": role,
+                                     "permissions":user_data['Roles'][role]}}
+        
+        with open('C:/Users/diwak/Desktop/sample.json', 'w') as file:
+            json.dump(user_data, file, indent=4)
+
+
+    def add_role(self, role_id, name, permissions):
+        user_data["Roles"] = {name: {"name": name,
+                                     "role_id": role_id,
+                                     "permissions": permissions}}
+        
+        with open('C:/Users/diwak/Desktop/sample.json', 'w') as file:
+            json.dump(user_data, file, indent=4)
+
+    def grant_permission(self, user_name, role_name, permission):
+        user_data = user_data["Users"].keys()
+        if user_name not in user_data:
+            return ValueError(f"User '{user_name}'does not exist.")
+        user_data["Users"]["permissions"].append(user_data["Roles"][role_name])
+
+        with open('C:/Users/diwak/Desktop/sample.json', 'w') as file:
+            json.dump(user_data, file, indent=4)
+            
+        return user_data["Users"][user_name]
+        
+    def check_permission(self, user_name):
+        user_data = user_data["Users"].keys()
+        permissions = ["read", "write", "delete"]
+        if user_name not in user_data:
+            return ValueError(f"User '{user_name}'does not exist.")
+        result = user_data["Users"][user_name]
+        for i in permissions:
+            if i in result["permissions"]:
+                print(f'{user_name} has {i} permissins: ', True)
+            else:
+                print(f'{user_name} has {i} permissins: ', False)
+    
+    def displaydata(self):
+        def validation(variable):
+            if variable.lower() == "y":
+                self.add_data = True
+            elif variable.lower() == "n":
+                self.add_data = False
+            else:
+                print("Please enter valid option")
+        # Define roles and permissions
+        self.add_data = True
+        while self.add_data:
+            self.user_role= input("Enter Role Name : ")
+            self.user_role_id = input("Enter Role ID : ")
+            self.access_input = input("Enter your permissions (read, write, delete) separated by spaces: ")
+            self.responses = self.access_input.split(" ")
+            rbac.add_role(self.user_role, self.user_role_id, self.responses )
+            self.add_more = input("Do you want to Add more (Y/N): ")
+            validation(self.add_more)
+           
+        self.add_data = True
+        while self.add_data:
+            # user_count = int(input("enter how many users needs to create : "))
+            # for user in range(user_count):
+            self.user_name = input("Enter username : ")
+            self.user_id = input("enter user id: ")
+            self.user_role = input("Enter rolename: ")
+            print(self.user_name, self.user_role)
+            rbac.add_user(self.user_id, self.user_name, self.user_role)
+            self.check_permission(self.user_name, self.user_role, self.responses)
+            self.add_more = input("Do you want to Add more (Y/N): ")
+            validation(self.add_more)
+            
+        # Example usage
+rbac = RBAC()
+rbac.displaydata()
+
+
