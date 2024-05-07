@@ -1,13 +1,27 @@
-
-import os
 import win32com.client
+import datetime
 
+# Create an instance of Outlook
 outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
+
+# Choose the folder where you want to search for emails (e.g., Inbox)
 inbox = outlook.GetDefaultFolder(6)  # 6 corresponds to the Inbox folder
 
-messages = inbox.Items
-message = messages.GetLast()
+# Define the start and end dates for the desired date range
+start_date = datetime.datetime(2024, 5, 1)
+end_date = datetime.datetime(2024, 5, 1)  # Specific date, change as needed
 
-attachments = message.Attachments
-for attachment in attachments:
-    attachment.SaveAsFile(os.path.join("path/to/save", attachment.FileName))
+# Construct the filter criteria for emails within the date range
+criteria = "[ReceivedTime] >= '" + start_date.strftime('%m/%d/%Y %H:%M:%S') + "' AND [ReceivedTime] <= '" + end_date.strftime('%m/%d/%Y %H:%M:%S') + "'"
+
+# Perform the search
+messages = inbox.Items.Restrict(criteria)
+
+# Iterate through the filtered emails
+for message in messages:
+    # Iterate through the attachments in the email
+    for attachment in message.Attachments:
+        # Specify the filename of the attachment you want to download
+        if attachment.FileName == "desired_attachment.txt":
+            # Save the attachment to a specified location
+            attachment.SaveAsFile(r'C:\path\to\save\desired_attachment.txt')
